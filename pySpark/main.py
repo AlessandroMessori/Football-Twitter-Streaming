@@ -10,7 +10,8 @@ if __name__ == "__main__":
             .add("payload", StringType())
 
     payloadSchema = StructType() \
-            .add("Text", StringType())
+            .add("Text", StringType()) \
+            .add("Lang", StringType())
                 
     # Reads the data from kafka
     df = spark \
@@ -22,16 +23,16 @@ if __name__ == "__main__":
         .load()
     
     messages = df \
-        .selectExpr("CAST(value AS STRING)") \
-        .select(from_json("value", tweetSchema).alias("data")) \
-        .select(from_json("data.payload", payloadSchema).alias("payload")) \
-        .select("payload.*")
-
+        .selectExpr("CAST(key AS STRING)","CAST(value AS STRING)","timestamp","offset") \
+        .withColumn("data",from_json("value", tweetSchema)) \
+        .withColumn("payload",from_json("data.payload", payloadSchema)) \
+        .select("payload.*","key","timestamp")        
 
     query = messages \
         .writeStream \
         .format("console") \
         .start()
+
 
     import time
     time.sleep(10)  # sleep 10 seconds
