@@ -1,5 +1,5 @@
 from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import explode, split, col, from_json, to_json, json_tuple, window, struct
+from pyspark.sql.functions import explode, split, col, from_json, to_json, json_tuple, window, struct, udf
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, LongType
 
 
@@ -16,9 +16,9 @@ def extractTweetPayload(df, tweetSchema, payloadSchema):
 
 def wordCountQuery(df, colName):
     return df \
-        .withWatermark("timestamp", "2 minutes") \
+        .withWatermark("timestamp", "10 seconds") \
         .withColumn('word', explode(split(col(colName), ' '))) \
-        .groupBy(window(col("timestamp"), "2 minutes", "1 minutes"),
+        .groupBy(window(col("timestamp"), "10 seconds", "5 seconds"),
                  col('word')
                  ).count() \
         .select("word", "count", to_json(struct("word", "count")).alias("value"))
@@ -34,6 +34,10 @@ def langCountQuery(df, colName):
         .select(colName, "count", to_json(struct(colName, "count")).alias("value"))
 
 
+def getLastName(full_name):
+    return full_name.split(" ")[-1:][0]
+
+
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("wordCounter").getOrCreate()
 
@@ -44,6 +48,19 @@ if __name__ == "__main__":
     payloadSchema = StructType() \
         .add("Text", StringType()) \
         .add("Lang", StringType())
+
+    players = spark.read \
+        .option("header", "true") \
+        .option("mode", "DROPMALFORMED") \
+        .csv("players_21.csv")
+
+    lastNameUDF = udf(getLastName, StringType())
+
+    player_names = players \
+        .withColumn(
+            "word", lastNameUDF("short_name")) \
+        .select("word") \
+        .limit(200)
 
     # Reads the data from kafka
     df = spark \
@@ -57,7 +74,8 @@ if __name__ == "__main__":
 
     messages = extractTweetPayload(df, tweetSchema, payloadSchema)
 
-    wordCount = wordCountQuery(messages, "Text")
+    wordCount = wordCountQuery(messages, "Text") \
+        .join(player_names, "word")
 
     #langCount = langCountQuery(messages, "Lang")
 
