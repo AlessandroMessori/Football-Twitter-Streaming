@@ -1,5 +1,5 @@
 from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import explode, split, col, from_json, json_tuple, window
+from pyspark.sql.functions import explode, split, col, from_json, to_json, json_tuple, window, struct
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, LongType
 
 if __name__ == "__main__":
@@ -29,13 +29,30 @@ if __name__ == "__main__":
         .select("payload.*", "key", "timestamp")
 
     langCount = messages \
-        .withWatermark("timestamp", "10 minutes") \
+        .withWatermark("timestamp", "2 minutes") \
         .groupBy(
-            window(col("timestamp"), "10 minutes", "5 minutes"),
+            window(col("timestamp"), "2 minutes", "1 minutes"),
             col("Lang")
-        ).count()
+        ).count() \
+        .select("Lang", "count", to_json(struct("Lang", "count")).alias("value"))
 
-    query = langCount \
+    wordCount = messages \
+        .withWatermark("timestamp", "2 minutes") \
+        .withColumn('word', explode(split(col('Text'), ' '))) \
+        .groupBy(window(col("timestamp"), "2 minutes", "1 minutes"),
+                 col('word')
+                 ).count() \
+        .select("word", "count", to_json(struct("word", "count")).alias("value"))
+
+    '''query = langCount \
+        .writeStream \
+        .format("kafka") \
+        .option("checkpointLocation", "/home/alessandro/Desktop/Repos/Football-Twitter-Streaming/checkpoints") \
+        .option("kafka.bootstrap.servers", "localhost:9092") \
+        .option("topic", "texts") \
+        .start()'''
+
+    query = wordCount \
         .writeStream \
         .format("console") \
         .start()
