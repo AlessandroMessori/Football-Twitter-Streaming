@@ -1,5 +1,5 @@
 from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import explode, split, col, from_json,json_tuple
+from pyspark.sql.functions import explode, split, col, from_json, json_tuple, window
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, LongType
 
 if __name__ == "__main__":
@@ -7,12 +7,12 @@ if __name__ == "__main__":
 
     # Defines schema of Twitter Post
     tweetSchema = StructType() \
-            .add("payload", StringType())
+        .add("payload", StringType())
 
     payloadSchema = StructType() \
-            .add("Text", StringType()) \
-            .add("Lang", StringType())
-                
+        .add("Text", StringType()) \
+        .add("Lang", StringType())
+
     # Reads the data from kafka
     df = spark \
         .readStream \
@@ -21,19 +21,23 @@ if __name__ == "__main__":
         .option("subscribe", "testing2") \
         .option("startingOffsets", "earliest") \
         .load()
-    
-    messages = df \
-        .selectExpr("CAST(key AS STRING)","CAST(value AS STRING)","timestamp","offset") \
-        .withColumn("data",from_json("value", tweetSchema)) \
-        .withColumn("payload",from_json("data.payload", payloadSchema)) \
-        .select("payload.*","key","timestamp")        
 
-    query = messages \
+    messages = df \
+        .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)", "CAST(timestamp AS TIMESTAMP)", "offset") \
+        .withColumn("data", from_json("value", tweetSchema)) \
+        .withColumn("payload", from_json("data.payload", payloadSchema)) \
+        .select("payload.*", "key", "timestamp")
+
+    langCount = messages \
+        .withWatermark("timestamp", "10 minutes") \
+        .groupBy(
+            window(col("timestamp"), "10 minutes", "5 minutes"),
+            col("Lang")
+        ).count()
+
+    query = langCount \
         .writeStream \
         .format("console") \
         .start()
 
-
-    import time
-    time.sleep(10)  # sleep 10 seconds
-    query.stop()
+    query.awaitTermination()
