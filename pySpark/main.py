@@ -1,5 +1,5 @@
 from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import explode, split, col, from_json, to_json, json_tuple, window, struct, udf
+from pyspark.sql.functions import lit, explode, split, col, from_json, to_json, json_tuple, window, struct, udf
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, LongType
 
 
@@ -59,8 +59,17 @@ if __name__ == "__main__":
     player_names = players \
         .withColumn(
             "word", lastNameUDF("short_name")) \
-        .select("word") \
-        .limit(500)
+        .withColumn("category", lit("Player")) \
+        .select("word", "category") \
+        .limit(500) \
+
+    teams = players \
+        .select("club_name") \
+        .withColumn("category", lit("Team")) \
+        .limit(500) \
+        .dropDuplicates() \
+
+    topics = player_names.union(teams)
 
     # Reads the data from kafka
     df = spark \
@@ -75,7 +84,7 @@ if __name__ == "__main__":
     messages = extractTweetPayload(df, tweetSchema, payloadSchema)
 
     wordCount = wordCountQuery(messages, "Text") \
-        .join(player_names, "word")
+        .join(topics, "word")
 
     langCount = langCountQuery(messages, "Lang")
 
