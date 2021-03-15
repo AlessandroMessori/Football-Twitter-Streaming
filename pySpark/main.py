@@ -84,7 +84,8 @@ if __name__ == "__main__":
     messages = extractTweetPayload(df, tweetSchema, payloadSchema)
 
     wordCount = wordCountQuery(messages, "Text") \
-        .join(topics, "word")
+        .join(topics, "word") \
+        .select("word", "count","category", to_json(struct("word", "count","category")).alias("value"))
 
     langCount = langCountQuery(messages, "Lang")
 
