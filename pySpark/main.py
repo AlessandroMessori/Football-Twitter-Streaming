@@ -60,7 +60,7 @@ if __name__ == "__main__":
         .withColumn(
             "word", lastNameUDF("short_name")) \
         .select("word") \
-        .limit(200)
+        .limit(500)
 
     # Reads the data from kafka
     df = spark \
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         .format("kafka") \
         .option("kafka.bootstrap.servers", "localhost:9092") \
         .option("failOnDataLoss", "false") \
-        .option("subscribe", "testing2") \
+        .option("subscribe", "tweets") \
         .option("startingOffsets", "earliest") \
         .load()
 
@@ -77,17 +77,17 @@ if __name__ == "__main__":
     wordCount = wordCountQuery(messages, "Text") \
         .join(player_names, "word")
 
-    #langCount = langCountQuery(messages, "Lang")
+    langCount = langCountQuery(messages, "Lang")
 
     query = wordCount \
         .writeStream \
         .format("kafka") \
         .option("checkpointLocation", "/home/alessandro/Desktop/Repos/Football-Twitter-Streaming/checkpoints") \
         .option("kafka.bootstrap.servers", "localhost:9092") \
-        .option("topic", "words") \
+        .option("topic", "countByName") \
         .start()
 
-    '''query = wordCount \
+    '''query = langCount \
         .writeStream \
         .format("console") \
         .start()'''
