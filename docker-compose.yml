@@ -59,7 +59,7 @@ services:
     container_name: connect
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_connect
     depends_on:
       - broker
       - schema-registry
@@ -210,6 +210,17 @@ services:
       - 5601:5601
     depends_on:
       - elasticsearch
+
+  pyspark:
+    image: continuumio/miniconda3:4.3.27
+    hostname: pyspark
+    container_name: pyspark
+    ports:
+      - 8888:8888
+    build:
+      context: .
+      dockerfile: Dockerfile_pyspark
+
 
 volumes:
   elasticsearch-data:
