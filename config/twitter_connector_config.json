@@ -1,0 +1,16 @@
+{
+  "name": "TwitterSourceConnectorConnector_0",
+  "config": {
+    "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "header.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "twitter.oauth.consumerKey": "******",
+    "twitter.oauth.consumerSecret": "******",
+    "twitter.oauth.accessToken": "******",
+    "twitter.oauth.accessTokenSecret": "******",
+    "filter.keywords": "football, calcio, Fußball, fútbol",
+    "kafka.status.topic": "tweets",
+    "process.deletes": "false"
+  }
+}

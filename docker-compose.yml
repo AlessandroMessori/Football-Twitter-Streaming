@@ -212,16 +212,18 @@ services:
       - elasticsearch
 
   pyspark:
-    image: continuumio/miniconda3:4.3.27
+    image: jupyter/pyspark-notebook:latest
     hostname: pyspark
     container_name: pyspark
     ports:
       - 8888:8888
-    build:
-      context: .
-      dockerfile: Dockerfile_pyspark
-
+    #volumes:
+    #  - pySpark: pySpark/
+    depends_on:
+      - broker
 
 volumes:
   elasticsearch-data:
+    driver: local
+  pySpark:
     driver: local

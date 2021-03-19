@@ -1,3 +1,4 @@
 checkpoints/
 output.txt
 .vscode/
+pySpark/.ipynb_checkpoints/
