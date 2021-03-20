@@ -181,7 +181,7 @@ services:
       KAFKA_REST_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
     container_name: elasticsearch
     environment:
       - xpack.security.enabled=false
@@ -197,13 +197,13 @@ services:
       - IPC_LOCK
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
-    ports:
+    ports:  
       - 9200:9200
       - 9300:9300
 
   kibana:
     container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.4.0
+    image: docker.elastic.co/kibana/kibana:7.11.2
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:

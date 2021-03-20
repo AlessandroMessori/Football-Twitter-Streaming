@@ -11,23 +11,6 @@ RUN confluent-hub install confluentinc/kafka-connect-elasticsearch:5.4.0 --no-pr
 
 
 #Create Topics [tweets,countByName,countByLang]
-RUN kafka-topics --create \
-  --bootstrap-server localhost:9092 \
-  --replication-factor 1 \
-  --partitions 1 \
-  --topic tweets
-
-RUN kafka-topics --create \
-  --bootstrap-server localhost:9092 \
-  --replication-factor 1 \
-  --partitions 1 \
-  --topic countByName
-
-RUN kafka-topics --create \
-  --bootstrap-server localhost:9092 \
-  --replication-factor 1 \
-  --partitions 1 \
-  --topic countByLang
 
 #Upload Twitter Connector Configuration
 
