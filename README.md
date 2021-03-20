@@ -15,6 +15,7 @@ The technology stack used for this project is the following:
 * PySpark, to make processing queries on the Kafka topics
 * Elasticsearch and Kibana, for data storage and visualization respectively
 
+![alt text](https://i.ibb.co/0ykJVzc/pipeline.png?raw=true)
 
 
 
@@ -46,7 +47,12 @@ You can access the  Confluent control center at http://localhost:9021/
 
 For a guide on how to use the control center refer to https://docs.confluent.io/platform/current/control-center/index.html
 
-You should now upload the configurations for the Twitter Source connector and the Elasticsearch Sink connector from the config file,you can do it in the "Connectors --> " section of the Control Center
+You should now upload the configurations for the Twitter Source connector and the Elasticsearch Sink connector from the config file,you can do it in the Connectors section of the Control Center
+
+
+![alt text](https://i.ibb.co/rd7gPTJ/upload.png?raw=true)
+
+
 
 You can access a Jupyter Notebook with PySpark installed and run all stream analysis queries at http://localhost:8888/
 During the first access Jupyter may ask you to enter a token, you can get it with the following command:
