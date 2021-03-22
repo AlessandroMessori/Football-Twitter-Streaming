@@ -52,7 +52,7 @@ if __name__ == "__main__":
     players = spark.read \
         .option("header", "true") \
         .option("mode", "DROPMALFORMED") \
-        .csv("players_21.csv")
+        .csv("work/players_21.csv")
 
     lastNameUDF = udf(getLastName, StringType())
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     df = spark \
         .readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
+        .option("kafka.bootstrap.servers", "broker:9092") \
         .option("failOnDataLoss", "false") \
         .option("subscribe", "tweets") \
         .option("startingOffsets", "earliest") \
@@ -92,14 +92,9 @@ if __name__ == "__main__":
     query = wordCount \
         .writeStream \
         .format("kafka") \
-        .option("checkpointLocation", "/home/alessandro/Desktop/Repos/Football-Twitter-Streaming/checkpoints") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
+        .option("checkpointLocation", "./checkpoints") \
+        .option("kafka.bootstrap.servers", "broker:9092") \
         .option("topic", "countByName") \
         .start()
-
-    '''query = langCount \
-        .writeStream \
-        .format("console") \
-        .start()'''
 
     query.awaitTermination()
