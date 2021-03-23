@@ -54,12 +54,7 @@ You should now upload the configurations for the Twitter Source connector and th
 
 
 
-You can access a Jupyter Notebook with PySpark installed and run all stream analysis queries at http://localhost:8888/
-During the first access Jupyter may ask you to enter a token, you can get it with the following command:
-
-```bash
-docker exec pyspark jupyter notebook list
-```
+You can access a Jupyter Notebook with PySpark installed and run all stream analysis queries at http://localhost:8888/ (access token: usde)
 
 To visualize the results of the computation you can connect to Kibana at http://localhost:5601/.
 
