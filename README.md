@@ -58,7 +58,7 @@ You can access a Jupyter Notebook with PySpark installed and run all stream anal
 
 To visualize the results of the computation you can connect to Kibana at http://localhost:5601/.
 
-You can create your own visualization or use the one I already configured,you can load it by uploading the file "" in the Dashboard section of Kibana.
+You can create your own visualization or use the one I already configured,you can load it by uploading the file "config/dashboard.ndjson" in the Managment --> Stack Managment --> Saved Objects section of Kibana.
 
 ## Limitations and Future Improvements
 
