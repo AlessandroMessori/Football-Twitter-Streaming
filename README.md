@@ -58,7 +58,16 @@ You can access a Jupyter Notebook with PySpark installed and run all stream anal
 
 To visualize the results of the computation you can connect to Kibana at http://localhost:5601/.
 
+In order to visualize the results you need to connect Kibana to Elastichsearch,by creating an index pattern for each of the Kafka topics.
+You can do so in Kibana in the Managment --> Stack Managment --> Index Patterns section.
+
+![alt text](https://i.ibb.co/wrDsCs0/index.png?raw=true)
+
+
 You can create your own visualization or use the one I already configured,you can load it by uploading the file "config/dashboard.ndjson" in the Managment --> Stack Managment --> Saved Objects section of Kibana.
+
+![alt text](https://i.ibb.co/LpMG5sJ/dashboard-2.jpg?raw=true)
+
 
 ## Limitations and Future Improvements
 

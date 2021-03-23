@@ -6,7 +6,7 @@
     "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "header.converter": "org.apache.kafka.connect.storage.StringConverter",
-     "topics": ["countByName","countByLang"],
+     "topics": ["countByName","countByLang","tweets"],
     "connection.url": "http://elasticsearch:9200",
     "type.name": "doc",
     "key.ignore": "true",
