@@ -8,10 +8,3 @@ RUN confluent-hub install confluentinc/kafka-connect-datagen:0.4.0 --no-prompt
 
 #installs the elastichsearch connector
 RUN confluent-hub install confluentinc/kafka-connect-elasticsearch:5.4.0 --no-prompt
-
-
-#Create Topics [tweets,countByName,countByLang]
-
-#Upload Twitter Connector Configuration
-
-#Upload Elasticsearch Connector Configuration
